@@ -1,0 +1,53 @@
+{
+  "name": "airgram-ts-example",
+  "version": "0.1.0",
+  "homepage": "https://airgram.io",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "keywords": [
+    "airgram",
+    "telegram",
+    "example"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "compile": "npm run clean && tsc",
+    "deploy": "np --yolo",
+    "dev": "DEBUG=airgram* dotenv nodemon --config nodemon.json",
+    "lint": "tslint --project \".\"",
+    "postversion": "git push && git push --tags",
+    "postdeploy": "npm publish dist",
+    "prepublishOnly": "npm run compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "pre-commit": "lint",
+  "author": "Alexander Krisko",
+  "license": "GPL-3.0",
+  "repository": "https://github.com/airgram/airgram-ts-example",
+  "dependencies": {
+    "airgram": "^0.1.0",
+    "airgram-debug": "^0.1.1",
+    "inversify": "^4.13.0",
+    "pouchdb": "^7.0.0",
+    "pouchdb-upsert": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.11.7",
+    "dotenv-cli": "^1.4.0",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "nodemon": "^1.18.4",
+    "np": "^3.0.4",
+    "pre-commit": "^1.2.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-standard": "^7.1.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.1.3"
+  }
+}
