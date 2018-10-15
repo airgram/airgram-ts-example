@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+// tslint:disable-next-line:ordered-imports
 import { ag, Airgram, AuthDialog, TYPES } from 'airgram'
 import DebugLogger from 'airgram-debug'
 import { getCalleeName, prompt } from 'airgram/helpers'
