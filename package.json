@@ -21,7 +21,7 @@
   "license": "GPL-3.0",
   "repository": "https://github.com/airgram/airgram-ts-example",
   "dependencies": {
-    "airgram": "^0.1.4",
+    "airgram": "^0.1.5",
     "airgram-debug": "^0.1.1",
     "inversify": "^4.13.0",
     "reflect-metadata": "^0.1.12",
