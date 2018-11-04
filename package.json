@@ -23,7 +23,7 @@
   "dependencies": {
     "airgram": "^0.1.5",
     "airgram-debug": "^0.1.1",
-    "inversify": "^4.13.0",
+    "inversify": "^5.0.1",
     "reflect-metadata": "^0.1.12",
     "pouchdb": "^7.0.0",
     "pouchdb-upsert": "^2.2.0"
