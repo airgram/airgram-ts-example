@@ -7,11 +7,9 @@ const db: PouchDB.Database = createCollection('airgram')
 @injectable()
 export default class PouchDBStore<DocT> implements ag.Store<DocT> {
   public async delete (id: string): Promise<void> {
-    try {
-      await db.remove(id)
-    } catch (e) {
-      throw e
-    }
+    db.get(id).then((doc) => db.remove(doc)).catch((error) => {
+      throw error
+    })
   }
 
   public async get (key: string, field?: string): Promise<any> {
