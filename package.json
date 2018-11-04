@@ -22,7 +22,7 @@
   "repository": "https://github.com/airgram/airgram-ts-example",
   "dependencies": {
     "airgram": "^0.1.5",
-    "airgram-debug": "^0.1.1",
+    "airgram-debug": "^0.1.4",
     "inversify": "^5.0.1",
     "reflect-metadata": "^0.1.12",
     "pouchdb": "^7.0.0",
