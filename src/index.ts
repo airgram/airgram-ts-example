@@ -24,8 +24,10 @@ airgram.use(updates)
 
 auth.use(new AuthDialog({
   code: () => prompt(`Please enter the secret code:\n`),
+  continue: () => false,
   phoneNumber: () => process.env.PHONE_NUMBER || prompt(`Please enter your phone number:\n`),
-  samePhoneNumber: ({ phoneNumber }) => prompt(`Do you want to sign in with the "${phoneNumber}" phone number? Y/N\n`)
+  samePhoneNumber: ({ phoneNumber }) => prompt(`Do you want to sign in with the "${phoneNumber}" phone number? Y/n\n`)
+    .then((answer) => !['N', 'n'].includes(answer.charAt(0)))
 }))
 
 // Getting updates
