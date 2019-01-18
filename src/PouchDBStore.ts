@@ -8,6 +8,9 @@ const db: PouchDB.Database = createCollection('airgram')
 export default class PouchDBStore<DocT> implements ag.Store<DocT> {
   public async delete (id: string): Promise<void> {
     db.get(id).then((doc) => db.remove(doc)).catch((error) => {
+      if (error.status === 404) {
+        return null
+      }
       throw error
     })
   }
