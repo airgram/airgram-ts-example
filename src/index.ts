@@ -19,6 +19,7 @@ airgram.bind<PouchDBStore<ag.AuthDoc>>(TYPES.AuthStore).to(PouchDBStore)
 airgram.bind<PouchDBStore<ag.MtpState>>(TYPES.MtpStateStore).to(PouchDBStore)
 
 const { auth, updates } = airgram
+
 airgram.use(auth)
 airgram.use(updates)
 
@@ -30,32 +31,27 @@ auth.use(new AuthDialog({
     .then((answer) => !['N', 'n'].includes(answer.charAt(0)))
 }))
 
+auth.login().then(async () => {
+  // Start long polling
+  await updates.startPolling()
+
+  // Get dialogs list
+  const dialogs = await airgram.client.messages.getDialogs({
+    flags: 0,
+    limit: 30,
+    offset_date: 0,
+    offset_id: 0,
+    offset_peer: { _: 'inputPeerEmpty' }
+  })
+
+  console.log(dialogs)
+
+}).catch((error) => {
+  console.error(error)
+})
+
 // Getting updates
 updates.use(({ update }: ag.UpdateContext, next) => {
   console.log(`"${update._}" ${JSON.stringify(update)}`)
   return next()
-})
-
-updates.startPolling().then(() => {
-  console.info('Long polling started')
-}).catch((error) => {
-  console.error(error)
-})
-
-airgram.use((ctx: ag.Context, next) => {
-  console.log(`Event: ${ctx._}`)
-  return next()
-})
-
-// Get dialogs list
-airgram.client.messages.getDialogs({
-  flags: 0,
-  limit: 30,
-  offset_date: 0,
-  offset_id: 0,
-  offset_peer: { _: 'inputPeerEmpty' }
-}).then((dialogs) => {
-  console.info(dialogs)
-}).catch((error) => {
-  console.error(error)
 })
