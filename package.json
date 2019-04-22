@@ -7,13 +7,15 @@
   "keywords": [
     "airgram",
     "telegram",
+    "tdlib",
     "example"
   ],
   "scripts": {
     "deploy": "np --yolo",
-    "dev": "DEBUG=airgram* dotenv nodemon --config nodemon.json",
+    "dev": "dotenv nodemon --config nodemon.json",
     "lint": "tslint --project \".\"",
     "postversion": "git push && git push --tags",
+    "start": "dotenv nodemon --config nodemon.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "pre-commit": "lint",
@@ -21,12 +23,7 @@
   "license": "GPL-3.0",
   "repository": "https://github.com/airgram/airgram-ts-example",
   "dependencies": {
-    "airgram": "^0.1.13",
-    "airgram-debug": "^0.1.4",
-    "inversify": "^5.0.1",
-    "reflect-metadata": "^0.1.12",
-    "pouchdb": "^7.0.0",
-    "pouchdb-upsert": "^2.2.0"
+    "airgram": "next"
   },
   "devDependencies": {
     "@types/node": "^10.11.7",
@@ -41,10 +38,10 @@
     "nodemon": "^1.18.9",
     "np": "^3.0.4",
     "pre-commit": "^1.2.2",
-    "ts-node": "^7.0.1",
+    "ts-node": "^8.1.0",
     "tslint": "^5.11.0",
     "tslint-config-standard": "^7.1.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.4.4"
   }
 }

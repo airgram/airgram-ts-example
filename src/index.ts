@@ -1,57 +1,51 @@
-import 'reflect-metadata'
-// tslint:disable-next-line:ordered-imports
-import { ag, Airgram, AuthDialog, TYPES } from 'airgram'
-import DebugLogger from 'airgram-debug'
-import { getCalleeName, prompt } from 'airgram/helpers'
-import { interfaces } from 'inversify'
-import PouchDBStore from './PouchDBStore'
+import { Airgram, Auth, prompt, UPDATE } from 'airgram'
+import ChatModel from './ChatModel'
+import { Context, contextFactory } from './context'
 
-const airgram = new Airgram({ id: Number(process.env.APP_ID!), hash: process.env.APP_HASH! })
-
-airgram.bind<ag.Logger & { level: string }>(TYPES.Logger).to(DebugLogger)
-  .onActivation((context: interfaces.Context, logger) => {
-    logger.namespace = [getCalleeName(context)]
-    logger.level = 'verbose'
-    return logger
-  })
-
-airgram.bind<PouchDBStore<ag.AuthDoc>>(TYPES.AuthStore).to(PouchDBStore)
-airgram.bind<PouchDBStore<ag.MtpState>>(TYPES.MtpStateStore).to(PouchDBStore)
-
-const { auth, updates } = airgram
-
-airgram.use(auth)
-airgram.use(updates)
-
-auth.use(new AuthDialog({
-  code: () => prompt(`Please enter the secret code:\n`),
-  continue: () => false,
-  phoneNumber: () => process.env.PHONE_NUMBER || prompt(`Please enter your phone number:\n`),
-  samePhoneNumber: ({ phoneNumber }) => prompt(`Do you want to sign in with the "${phoneNumber}" phone number? Y/n\n`)
-    .then((answer) => !['N', 'n'].includes(answer.charAt(0)))
-}))
-
-auth.login().then(async () => {
-  // Start long polling
-  await updates.startPolling()
-
-  // Get dialogs list
-  const dialogs = await airgram.client.messages.getDialogs({
-    flags: 0,
-    limit: 30,
-    offset_date: 0,
-    offset_id: 0,
-    offset_peer: { _: 'inputPeerEmpty' }
-  })
-
-  console.log(dialogs)
-
-}).catch((error) => {
-  console.error(error)
+const airgram = new Airgram<Context>({
+  apiHash: process.env.APP_HASH!,
+  apiId: Number(process.env.APP_ID!),
+  command: process.env.TDLIB_COMMAND,
+  contextFactory,
+  logVerbosityLevel: 2,
+  models: {
+    chat: ChatModel
+  }
 })
 
-// Getting updates
-updates.use(({ update }: ag.UpdateContext, next) => {
-  console.log(`"${update._}" ${JSON.stringify(update)}`)
+const auth = new Auth(airgram)
+
+auth.use({
+  code: () => prompt(`Please enter the secret code:\n`),
+  phoneNumber: async () => process.env.PHONE_NUMBER || prompt(`Please enter your phone number:\n`)
+})
+
+// Get current user
+airgram.api.getMe().then((me) => {
+  console.log(`[Me] `, JSON.stringify(me))
+})
+
+// Getting all updates
+airgram.updates.use((ctx, next) => {
+  console.log(`[all updates][${ctx._}]`, JSON.stringify(ctx.update))
   return next()
+})
+
+airgram.updates.on(UPDATE.updateNewMessage, async ({ chats, update }) => {
+  const { message } = update
+  const chat = chats.get(message.chatId)
+
+  if (!chat) {
+    throw new Error('Unknown chat')
+  }
+
+  console.log('[new message]', {
+    title: chat.title,
+    isBasicGroup: chat.isBasicGroup,
+    isSupergroup: chat.isSupergroup,
+    isPrivateChat: chat.isPrivateChat,
+    isSecretChat: chat.isSecretChat,
+    isMeChat: await chats.isMe(chat.id),
+    message: JSON.stringify(message)
+  })
 })

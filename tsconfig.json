@@ -10,9 +10,7 @@
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,
-    "lib": ["esnext"]
-  },
-  "exclude": [
-    "dist/**"
-  ]
+    "lib": ["esnext"],
+    "baseUrl": "."
+  }
 }

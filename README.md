@@ -13,7 +13,10 @@ $ git clone https://github.com/airgram/airgram-ts-example.git
 $ cd airgram-ts-example
 $ npm i
 ```
-3. Run example:
+
+3. Open `./env` and set your values
+
+4. Run example:
 ```bash
 npm run dev
 ```
