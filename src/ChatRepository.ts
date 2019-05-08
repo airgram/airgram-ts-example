@@ -1,4 +1,5 @@
-import { ag, UPDATE } from 'airgram'
+import { ag } from 'airgram'
+import { UPDATE } from 'airgram-api'
 import ChatModel from './ChatModel'
 
 export default class ChatRepository<ContextT> {

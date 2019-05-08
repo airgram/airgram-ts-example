@@ -23,7 +23,8 @@
   "license": "GPL-3.0",
   "repository": "https://github.com/airgram/airgram-ts-example",
   "dependencies": {
-    "airgram": "next"
+    "airgram": "^1.0.0",
+    "airgram-api": "^1.0.4"
   },
   "devDependencies": {
     "@types/node": "^10.11.7",
