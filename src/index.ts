@@ -2,7 +2,10 @@ import 'reflect-metadata'
 // tslint:disable-next-line:ordered-imports
 import { ag, Airgram, AuthDialog, TYPES } from 'airgram'
 import DebugLogger from 'airgram-debug'
+import MtpNetwork from 'airgram/base/MtpNetwork'
 import { getCalleeName, prompt } from 'airgram/helpers'
+import axios from 'axios'
+import * as https from 'https'
 import { interfaces } from 'inversify'
 import PouchDBStore from './PouchDBStore'
 
@@ -14,6 +17,12 @@ airgram.bind<ag.Logger & { level: string }>(TYPES.Logger).to(DebugLogger)
     logger.level = 'verbose'
     return logger
   })
+
+airgram.bind<MtpNetwork>(TYPES.MtpNetwork).to(MtpNetwork).onActivation((context, network) => {
+  const httpsAgent = new https.Agent()
+  network.axios = axios.create({ httpsAgent })
+  return network
+})
 
 airgram.bind<PouchDBStore<ag.AuthDoc>>(TYPES.AuthStore).to(PouchDBStore)
 airgram.bind<PouchDBStore<ag.MtpState>>(TYPES.MtpStateStore).to(PouchDBStore)
@@ -51,7 +60,7 @@ auth.login().then(async () => {
 })
 
 // Getting updates
-updates.use(({ update }: ag.UpdateContext, next) => {
+updates.use(({ update }: ag.UpdateContext & { update: Record<string, any> }, next) => {
   console.log(`"${update._}" ${JSON.stringify(update)}`)
   return next()
 })
