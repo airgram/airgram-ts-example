@@ -1,5 +1,6 @@
 import { Airgram, Auth, prompt } from 'airgram'
 import { UPDATE } from 'airgram-api'
+import { useModels } from 'airgram-use-models'
 import ChatModel from './ChatModel'
 import { Context, contextFactory } from './context'
 
@@ -9,9 +10,9 @@ const airgram = new Airgram<Context>({
   command: process.env.TDLIB_COMMAND,
   contextFactory,
   logVerbosityLevel: 2,
-  models: {
+  models: useModels({
     chat: ChatModel
-  }
+  })
 })
 
 const auth = new Auth(airgram)
@@ -24,6 +25,8 @@ auth.use({
 // Get current user
 airgram.api.getMe().then((me) => {
   console.log(`[Me] `, JSON.stringify(me))
+}).catch((error) => {
+  console.error(error)
 })
 
 // Getting all updates

@@ -8,8 +8,6 @@ export default class ChatRepository<ContextT> {
   constructor (private airgram: ag.Airgram) {
     this.chatMap = new Map<number, ChatModel>()
 
-    console.info('ADD MIDDLE')
-
     // Add new chats to the store
     airgram.updates.on(UPDATE.updateNewChat, ({ update }, next) => {
       console.info('SET CHAT', update.chat.isSupergroup)

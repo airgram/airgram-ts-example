@@ -1,5 +1,5 @@
 import { CHAT_TYPE } from 'airgram-api'
-import { ChatBaseModel } from 'airgram-api/models/Chat'
+import { ChatBaseModel } from 'airgram-use-models'
 
 export default class ChatModel extends ChatBaseModel {
   get isBasicGroup (): boolean {
