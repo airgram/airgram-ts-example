@@ -23,7 +23,7 @@
   "license": "GPL-3.0",
   "repository": "https://github.com/airgram/airgram-ts-example",
   "dependencies": {
-    "airgram": "^1.1.0",
+    "airgram": "^1.1.2",
     "airgram-api": "^1.1.2",
     "airgram-use-models": "^1.1.0"
   },
@@ -44,6 +44,6 @@
     "tslint": "^5.18.0",
     "tslint-config-standard": "^8.0.1",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.2.4"
+    "typescript": "^3.5.2"
   }
 }
