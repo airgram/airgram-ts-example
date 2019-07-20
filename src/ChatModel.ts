@@ -1,5 +1,5 @@
-import { CHAT_TYPE } from 'airgram-api'
-import { ChatBaseModel } from 'airgram-use-models'
+import { CHAT_TYPE } from '@airgram/api'
+import { ChatBaseModel } from '@airgram/use-models'
 
 export default class ChatModel extends ChatBaseModel {
   get isBasicGroup (): boolean {
@@ -20,6 +20,6 @@ export default class ChatModel extends ChatBaseModel {
 }
 
 // tslint:disable:no-empty-interface
-declare module 'airgram-api/outputs/Chat' {
+declare module '@airgram/api/outputs/Chat' {
   export interface Chat extends ChatModel {}
 }

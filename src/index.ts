@@ -1,6 +1,6 @@
+import { UPDATE } from '@airgram/api'
+import { useModels } from '@airgram/use-models'
 import { Airgram, Auth, prompt } from 'airgram'
-import { UPDATE } from 'airgram-api'
-import { useModels } from 'airgram-use-models'
 import ChatModel from './ChatModel'
 import { Context, contextFactory } from './context'
 

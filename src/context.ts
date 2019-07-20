@@ -1,14 +1,14 @@
-import { ag, createContext } from 'airgram'
+import { createContext } from 'airgram'
 import ChatRepository from './ChatRepository'
 
-export interface Context extends ag.Context {
+export interface Context extends Airgram.Context {
   chats: ChatRepository<Context>
 }
 
-export const contextFactory: ag.ContextFactory<Context> = (airgram: ag.Airgram<Context>) => {
+export const contextFactory: Airgram.ContextFactory<Context> = (airgram: Airgram.AirgramInstance<Context>) => {
   const chats = new ChatRepository<Context>(airgram)
 
-  return (options: ag.ContextOptions) => ({
+  return (options: Airgram.ContextOptions) => ({
     ...createContext(options),
     chats
   })

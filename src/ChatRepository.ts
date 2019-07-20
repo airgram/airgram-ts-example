@@ -1,11 +1,10 @@
-import { ag } from 'airgram'
-import { UPDATE } from 'airgram-api'
+import { UPDATE } from '@airgram/api'
 import ChatModel from './ChatModel'
 
 export default class ChatRepository<ContextT> {
   private chatMap: Map<number, ChatModel>
 
-  constructor (private airgram: ag.Airgram) {
+  constructor (private airgram: Airgram.AirgramInstance) {
     this.chatMap = new Map<number, ChatModel>()
 
     // Add new chats to the store
@@ -30,7 +29,11 @@ export default class ChatRepository<ContextT> {
   public async isMe (id: number): Promise<boolean> {
     const chat = this.get(id)
     if (chat && 'userId' in chat.type) {
-      return (await this.airgram.api.getMe()).id === chat.type.userId
+      const me = await this.airgram.api.getMe()
+      if (me._ === 'error') {
+        throw new Error(me.message)
+      }
+      return me.id === chat.type.userId
     }
     return false
   }
@@ -39,10 +42,15 @@ export default class ChatRepository<ContextT> {
     this.chatMap.set(id, chat)
   }
 
-  private fetch (id: number): Promise<ChatModel> {
-    return this.airgram.api.getChat({ chatId: id }).then((chat) => {
-      this.chatMap.set(id, chat)
-      return chat
-    })
+  private async fetch (id: number): Promise<ChatModel> {
+    const chatOrError = await this.airgram.api.getChat({ chatId: id })
+
+    if (chatOrError._ === 'error') {
+      throw new Error(chatOrError.message)
+    } else {
+      this.chatMap.set(id, chatOrError)
+    }
+
+    return chatOrError
   }
 }
