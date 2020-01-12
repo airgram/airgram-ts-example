@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "deploy": "np --yolo",
-    "dev": "dotenv nodemon --config nodemon.json",
+    "dev": "DEBUG=airgram* dotenv nodemon --config nodemon.json",
     "lint": "tslint --project \".\"",
     "postversion": "git push && git push --tags",
     "start": "dotenv nodemon --config nodemon.json",
@@ -23,27 +23,28 @@
   "license": "GPL-3.0",
   "repository": "https://github.com/airgram/airgram-ts-example",
   "dependencies": {
-    "@airgram/api": "^1.2.0",
-    "@airgram/use-models": "^1.2.0",
-    "airgram": "^1.2.0"
+    "@airgram/constants": "^2.1.2",
+    "@airgram/core": "^2.3.0",
+    "@airgram/use-models": "^2.2.0",
+    "airgram": "^2.3.0",
+    "debug": "^4.1.1"
   },
   "devDependencies": {
     "@types/node": "^12.0.10",
-    "dotenv-cli": "^1.4.0",
-    "eslint": "^6.0.1",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-node": "^9.1.0",
+    "dotenv-cli": "^3.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "nodemon": "^1.19.1",
-    "np": "^5.0.3",
+    "nodemon": "^2.0.2",
+    "np": "^5.2.1",
     "pre-commit": "^1.2.2",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
-    "tslint-config-standard": "^8.0.1",
+    "ts-node": "^8.6.1",
+    "tslint": "^5.20.1",
+    "tslint-config-standard": "^9.0.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.4"
   }
 }

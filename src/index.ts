@@ -1,26 +1,30 @@
-import { UPDATE } from '@airgram/api'
+import { UPDATE } from '@airgram/constants'
 import { useModels } from '@airgram/use-models'
-import { Airgram, Auth, prompt } from 'airgram'
+import { Airgram, Auth, isError, prompt } from 'airgram'
+import debug from 'debug'
 import ChatModel from './ChatModel'
-import { Context, contextFactory } from './context'
+import { Store } from './Store'
 
-const airgram = new Airgram<Context>({
+const writeLog = debug('airgram:log')
+const writeError = debug('airgram:error')
+
+const store = new Store()
+
+const airgram = new Airgram({
   apiHash: process.env.APP_HASH!,
   apiId: Number(process.env.APP_ID!),
   command: process.env.TDLIB_COMMAND,
-  contextFactory,
   logVerbosityLevel: 2,
   models: useModels({
     chat: ChatModel
-  })
+  }),
+  context: { $store: store }
 })
 
-const auth = new Auth(airgram)
-
-auth.use({
+airgram.use(new Auth({
   code: () => prompt(`Please enter the secret code:\n`),
   phoneNumber: async () => process.env.PHONE_NUMBER || prompt(`Please enter your phone number:\n`)
-})
+}))
 
 // Get current user
 airgram.api.getMe().then((me) => {
@@ -29,15 +33,68 @@ airgram.api.getMe().then((me) => {
   console.error(error)
 })
 
-// Getting all updates
-airgram.updates.use((ctx, next) => {
-  console.log(`[all updates][${ctx._}]`, JSON.stringify(ctx.update))
+// Save users to the store
+airgram.on(UPDATE.updateUser, async ({ $store, update }, next) => {
+  const { user } = update
+  $store.users.set(user.id, user)
   return next()
 })
 
-airgram.updates.on(UPDATE.updateNewMessage, async ({ chats, update }) => {
+// Save chats to the store
+airgram.on(UPDATE.updateNewChat, async ({ $store, update }, next) => {
+  const { chat } = update
+  $store.chats.set(chat.id, chat)
+  return next()
+})
+
+// Save last messages to the store
+airgram.on(UPDATE.updateChatLastMessage, async ({ $store, update }, next) => {
+  $store.chatLastMessage.set(update.chatId, update)
+  return next()
+})
+
+airgram.api.getChats({
+  limit: 10,
+  offsetChatId: 0,
+  offsetOrder: '9223372036854775807' // 2^63
+}).then(({ response, $store }) => {
+  if (isError(response)) {
+    throw new Error(`[TDLib][${response.code}] ${response.message}`)
+  }
+  const chats = response.chatIds.map((chatId) => {
+    const chat = $store.chats.get(chatId)
+    const message = $store.chatLastMessage.get(chatId)
+
+    if (!chat || !message || !message.lastMessage) {
+      throw new Error('Invalidate store')
+    }
+
+    const { lastMessage } = message
+    const { title } = chat
+    const sentBy = $store.users.get(lastMessage.senderUserId)
+
+    return {
+      title,
+      lastMessage: lastMessage.content,
+      sentBy
+    }
+  })
+
+  writeLog('getChats:')
+  writeLog(chats)
+}).catch(writeError)
+
+// Getting all updates
+// airgram.use((ctx, next) => {
+//   if ('update' in ctx) {
+//     console.log(`[all updates][${ctx._}]`, JSON.stringify(ctx.update))
+//   }
+//   return next()
+// })
+
+airgram.on(UPDATE.updateNewMessage, async ({ $store, update }) => {
   const { message } = update
-  const chat = chats.get(message.chatId)
+  const chat = $store.chats.get(message.chatId)
 
   if (!chat) {
     throw new Error('Unknown chat')
@@ -49,7 +106,6 @@ airgram.updates.on(UPDATE.updateNewMessage, async ({ chats, update }) => {
     isSupergroup: chat.isSupergroup,
     isPrivateChat: chat.isPrivateChat,
     isSecretChat: chat.isSecretChat,
-    isMeChat: await chats.isMe(chat.id),
     message: JSON.stringify(message)
   })
 })
