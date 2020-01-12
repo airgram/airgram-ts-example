@@ -14,7 +14,7 @@ $ cd airgram-ts-example
 $ npm i
 ```
 
-3. Open `./env` and set your values
+3. Open [`./env`](https://github.com/airgram/airgram-ts-example/blob/master/.env#L3) and set the path to TDLib command
 
 4. Run example:
 ```bash
